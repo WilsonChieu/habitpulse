@@ -157,7 +157,7 @@ export function HabitCard({ habit, onToggle, onEdit, onDelete }: HabitCardProps)
           <div className="bg-warm-card p-8 border border-primary/30 max-w-sm mx-4 animate-scale-in shadow-lg">
             <h3 className="text-xl font-black text-text mb-4">Delete Habit?</h3>
             <p className="text-text-secondary mb-6 font-medium">
-              Are you sure you want to delete "{habit.title}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{habit.title}&rdquo;? This action cannot be undone.
             </p>
             <div className="flex space-x-4">
               <button

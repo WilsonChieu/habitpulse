@@ -1,5 +1,5 @@
 "use client";
-import { Trophy, Target, Flame, TrendingUp, Calendar, Star } from "lucide-react";
+import { Trophy, Target, Flame, TrendingUp, Star } from "lucide-react";
 import { Card } from "./ui/card";
 import { Habit } from "../types/habit";
 
@@ -44,8 +44,6 @@ function StatCard({ icon, title, value, subtitle, delay = 0 }: StatCardProps) {
 }
 
 export function ProgressStats({ habits }: ProgressStatsProps) {
-  const today = new Date().toDateString();
-  
   // Calculate statistics
   const totalHabits = habits.length;
   const completedToday = habits.filter(h => h.doneToday).length;
@@ -102,7 +100,7 @@ export function ProgressStats({ habits }: ProgressStatsProps) {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-2xl font-black text-text tracking-tight">
-              TODAY'S PROGRESS
+              TODAY&apos;S PROGRESS
             </h3>
             <p className="text-sm text-text-secondary font-medium uppercase tracking-wider">
               {new Date().toLocaleDateString('en-US', { 

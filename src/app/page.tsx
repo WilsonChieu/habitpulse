@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, Sparkles, Zap, Target, Flame } from "lucide-react";
+import { Plus, Sparkles, Zap } from "lucide-react";
 import { HabitCard } from "@/components/HabitCard";
 import { Habit } from "@/types/habit";
 import { AddHabitDialog } from "@/components/AddHabitDialog";
@@ -18,7 +18,7 @@ export default function Home() {
       try {
         const parsedHabits = JSON.parse(saved);
         // Migrate old habit format if needed
-        const migratedHabits = parsedHabits.map((habit: any) => {
+        const migratedHabits = parsedHabits.map((habit: Habit) => {
           if (!habit.emoji) habit.emoji = "✨";
           if (!habit.category) habit.category = "Other";
           if (!habit.totalDays) habit.totalDays = 0;
@@ -118,9 +118,6 @@ export default function Home() {
     setHabits(prevHabits => prevHabits.filter(habit => habit.id !== id));
   };
 
-  const completedToday = habits.filter(h => h.doneToday).length;
-  const totalHabits = habits.length;
-
   return (
     <div className="min-h-screen bg-warm">
       {/* Hero Header - Professional and Warm */}
@@ -177,7 +174,7 @@ export default function Home() {
               START YOUR HABIT JOURNEY
             </h3>
             <p className="text-lg text-text-secondary mb-8 max-w-2xl mx-auto font-medium">
-              Create your first habit and begin building the life you've always wanted. Every great journey starts with a single step.
+              Create your first habit and begin building the life you&apos;ve always wanted. Every great journey starts with a single step.
             </p>
             <button
               onClick={() => setShowAddDialog(true)}
@@ -222,7 +219,7 @@ export default function Home() {
             </div>
             <div>
               <p className="font-black uppercase tracking-wide">Great job!</p>
-              <p className="text-sm font-medium">"{lastCompletedHabit}" completed!</p>
+              <p className="text-sm font-medium">&ldquo;{lastCompletedHabit}&rdquo; completed!</p>
             </div>
           </div>
         </div>
