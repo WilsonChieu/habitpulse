@@ -1,0 +1,360 @@
+@import "tailwindcss";
+@tailwind utilities;
+@import "@fontsource/inter";
+
+@theme {
+  --color-primary: hsl(25 100% 50%);
+  --color-secondary: hsl(25 80% 45%);
+  --color-accent: hsl(25 90% 55%);
+  --color-success: hsl(160 84% 39%);
+  --color-warning: hsl(38 92% 50%);
+  --color-error: hsl(0 84% 60%);
+}
+
+:root {
+  /* Professional Warm Color System */
+  --color-primary-h: 25;
+  --color-primary-s: 100%;
+  --color-primary-l: 50%;
+  
+  --color-primary: hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l));
+  --color-primary-light: hsl(var(--color-primary-h) var(--color-primary-s) 60%);
+  --color-primary-dark: hsl(var(--color-primary-h) var(--color-primary-s) 40%);
+  
+  --color-secondary-h: 25;
+  --color-secondary-s: 80%;
+  --color-secondary-l: 45%;
+  --color-secondary: hsl(var(--color-secondary-h) var(--color-secondary-s) var(--color-secondary-l));
+  
+  --color-accent-h: 25;
+  --color-accent-s: 90%;
+  --color-accent-l: 55%;
+  --color-accent: hsl(var(--color-accent-h) var(--color-accent-s) var(--color-accent-l));
+  
+  --color-success-h: 160;
+  --color-success-s: 84%;
+  --color-success-l: 39%;
+  --color-success: hsl(var(--color-success-h) var(--color-success-s) var(--color-success-l));
+  --color-success-light: hsl(var(--color-success-h) var(--color-success-s) 45%);
+  
+  --color-warning-h: 38;
+  --color-warning-s: 92%;
+  --color-warning-l: 50%;
+  --color-warning: hsl(var(--color-warning-h) var(--color-warning-s) var(--color-warning-l));
+  
+  --color-error-h: 0;
+  --color-error-s: 84%;
+  --color-error-l: 60%;
+  --color-error: hsl(var(--color-error-h) var(--color-error-s) var(--color-error-l));
+  
+  /* Background Colors - Warm and Professional */
+  --color-bg: hsl(45 30% 98%);
+  --color-bg-secondary: hsl(45 25% 95%);
+  --color-card: hsl(45 35% 99%);
+  --color-card-hover: hsl(45 30% 97%);
+  
+  /* Text Colors - Clean and Readable */
+  --color-text: hsl(0 0% 15%);
+  --color-text-secondary: hsl(0 0% 35%);
+  --color-text-muted: hsl(0 0% 50%);
+  
+  /* Border Colors - Subtle and Warm */
+  --color-border: hsl(25 20% 85%);
+  --color-border-hover: hsl(25 30% 75%);
+  
+  /* Gradients - Warm and Professional */
+  --gradient-primary: linear-gradient(135deg, hsl(25 100% 50%), hsl(25 80% 45%));
+  --gradient-success: linear-gradient(135deg, hsl(160 84% 39%), hsl(142 76% 36%));
+  --gradient-card: linear-gradient(135deg, hsl(45 35% 99%), hsl(45 30% 97%));
+  --gradient-accent: linear-gradient(135deg, hsl(25 90% 55%), hsl(25 100% 50%));
+  
+  /* Shadows - Warm and Subtle */
+  --shadow-soft: 0 4px 12px hsl(25 50% 50% / 0.08);
+  --shadow-medium: 0 8px 25px hsl(25 50% 50% / 0.12);
+  --shadow-large: 0 20px 40px hsl(25 50% 50% / 0.15);
+  --shadow-glow: 0 0 20px hsl(25 100% 50% / 0.2);
+  
+  /* Fonts - Clean and Professional */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Spacing - Generous and Clean */
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  
+  /* Transitions - Smooth and Professional */
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+  --transition-slow: 350ms ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: hsl(0 0% 8%);
+    --color-bg-secondary: hsl(0 0% 5%);
+    --color-card: hsl(0 0% 12%);
+    --color-card-hover: hsl(0 0% 15%);
+    
+    --color-text: hsl(0 0% 95%);
+    --color-text-secondary: hsl(0 0% 80%);
+    --color-text-muted: hsl(0 0% 60%);
+    
+    --color-border: hsl(25 20% 20%);
+    --color-border-hover: hsl(25 30% 30%);
+    
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 12%), hsl(0 0% 10%));
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Professional Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Custom Animations - Smooth and Professional */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes celebration {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.15) rotate(-8deg);
+  }
+  50% {
+    transform: scale(1.25) rotate(8deg);
+  }
+  75% {
+    transform: scale(1.15) rotate(-4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Utility Classes */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-celebration {
+  animation: celebration 0.8s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.progress-bar {
+  animation: progressFill 1s ease-out;
+}
+
+/* Professional Design Elements */
+.japanese-border {
+  border: 2px solid var(--color-primary);
+}
+
+.japanese-border-thin {
+  border: 1px solid var(--color-primary);
+}
+
+.japanese-shadow {
+  box-shadow: 4px 4px 0px var(--color-primary);
+}
+
+.japanese-shadow-hover:hover {
+  box-shadow: 6px 6px 0px var(--color-primary);
+  transform: translate(-2px, -2px);
+}
+
+/* Custom Scrollbar - Minimal */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Focus Styles - Professional */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  focus-ring-color: var(--color-primary);
+}
+
+/* Glass Effect - Minimal */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Professional Grid System */
+.japanese-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Bold Typography Classes */
+.text-bold {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.text-extra-bold {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+/* Professional Color Classes */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-secondary {
+  border-color: var(--color-secondary);
+}
+
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+/* Warm Background Classes */
+.bg-warm {
+  background-color: var(--color-bg);
+}
+
+.bg-warm-secondary {
+  background-color: var(--color-bg-secondary);
+}
+
+.bg-warm-card {
+  background-color: var(--color-card);
+}
