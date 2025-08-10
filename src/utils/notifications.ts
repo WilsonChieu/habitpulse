@@ -225,19 +225,12 @@ class NotificationManager {
         icon: '/icon-192x192.png',
         badge: '/icon-72x72.png',
         tag: `habitpulse-${type}`,
-        requireInteraction: type === 'warning',
-        actions: [
-          {
-            action: 'complete',
-            title: 'Complete Now',
-            icon: '/icon-72x72.png'
-          }
-        ]
+        requireInteraction: type === 'warning'
       };
 
-      // Add vibration if enabled
-      if (this.settings.vibrationEnabled) {
-        options.vibrate = [200, 100, 200];
+      // Add vibration if enabled (only in service worker context)
+      if (this.settings.vibrationEnabled && 'vibrate' in options) {
+        (options as any).vibrate = [200, 100, 200];
       }
 
       // Show notification
@@ -257,7 +250,6 @@ class NotificationManager {
 
     const habits = this.getStoredHabits();
     const now = new Date();
-    const today = now.toDateString();
 
     habits.forEach(habit => {
       if (!habit.doneToday && habit.streak > 0) {

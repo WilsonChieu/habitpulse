@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Plus, X, Sparkles } from "lucide-react";
 import { Card } from "./ui/card";
-import { Habit } from "../types/habit";
 
 interface AddHabitDialogProps {
   isOpen: boolean;

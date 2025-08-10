@@ -62,7 +62,7 @@ export function NotificationSettings({ isOpen, onClose }: NotificationSettingsPr
     }
   };
 
-  const handleSettingChange = (key: keyof NotificationSettings, value: any) => {
+  const handleSettingChange = (key: keyof NotificationSettings, value: boolean | string) => {
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
     updateNotificationSettings(newSettings);
