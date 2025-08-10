@@ -7,7 +7,7 @@ import { Habit } from "../types/habit";
 interface AddHabitDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (habit: Omit<Habit, "id" | "streak" | "doneToday" | "totalDays" | "completedDays" | "createdAt">) => void;
+  onAdd: (title: string, emoji: string, category: string) => void;
 }
 
 const categories = [
@@ -34,11 +34,7 @@ export function AddHabitDialog({ isOpen, onClose, onAdd }: AddHabitDialogProps) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      onAdd({
-        title: title.trim(),
-        emoji: selectedEmoji,
-        category: selectedCategory.name,
-      });
+      onAdd(title.trim(), selectedEmoji, selectedCategory.name);
       handleClose();
     }
   };

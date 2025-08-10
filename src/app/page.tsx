@@ -1,32 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, Sparkles, Zap } from "lucide-react";
-import { HabitCard } from "@/components/HabitCard";
-import { Habit } from "@/types/habit";
-import { AddHabitDialog } from "@/components/AddHabitDialog";
-import { ProgressStats } from "@/components/ProgressStats";
+import { Plus, Zap, Sparkles, Bell } from "lucide-react";
+import { HabitCard } from "../components/HabitCard";
+import { AddHabitDialog } from "../components/AddHabitDialog";
+import { ProgressStats } from "../components/ProgressStats";
+import { NotificationSettings } from "../components/NotificationSettings";
+import { notificationManager, showNotification } from "../utils/notifications";
+import { Habit } from "../types/habit";
 
 export default function Home() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [lastCompletedHabit, setLastCompletedHabit] = useState<string | null>(null);
 
   // Load habits from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("habitpulse");
-    if (saved) {
+    const storedHabits = localStorage.getItem("habitpulse-habits");
+    if (storedHabits) {
       try {
-        const parsedHabits = JSON.parse(saved);
-        // Migrate old habit format if needed
-        const migratedHabits = parsedHabits.map((habit: Habit) => {
-          if (!habit.emoji) habit.emoji = "✨";
-          if (!habit.category) habit.category = "Other";
-          if (!habit.totalDays) habit.totalDays = 0;
-          if (!habit.completedDays) habit.completedDays = 0;
-          if (!habit.createdAt) habit.createdAt = new Date().toISOString();
-          return habit;
-        });
-        setHabits(migratedHabits);
+        const parsedHabits = JSON.parse(storedHabits);
+        setHabits(parsedHabits);
       } catch (error) {
         console.error("Error loading habits:", error);
       }
@@ -35,73 +29,114 @@ export default function Home() {
 
   // Save habits to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("habitpulse", JSON.stringify(habits));
+    localStorage.setItem("habitpulse-habits", JSON.stringify(habits));
   }, [habits]);
 
-  // Reset daily completion at midnight
+  // Initialize notification system
   useEffect(() => {
-    const checkAndResetDaily = () => {
-      const now = new Date();
-      const lastReset = localStorage.getItem("habitpulse_lastReset");
-      const lastResetDate = lastReset ? new Date(lastReset) : null;
+    notificationManager.initialize();
+  }, []);
+
+  // Check for daily reset
+  useEffect(() => {
+    const checkDailyReset = () => {
+      const today = new Date().toDateString();
+      const lastReset = localStorage.getItem("habitpulse-last-reset");
       
-      if (!lastResetDate || lastResetDate.toDateString() !== now.toDateString()) {
-        setHabits(prevHabits => 
+      if (lastReset !== today) {
+        setHabits(prevHabits =>
           prevHabits.map(habit => ({
             ...habit,
-            doneToday: false,
-            totalDays: habit.totalDays + 1
+            doneToday: false
           }))
         );
-        localStorage.setItem("habitpulse_lastReset", now.toISOString());
+        localStorage.setItem("habitpulse-last-reset", today);
       }
     };
 
-    checkAndResetDaily();
-    const interval = setInterval(checkAndResetDaily, 60000); // Check every minute
+    checkDailyReset();
+    const interval = setInterval(checkDailyReset, 60000); // Check every minute
     return () => clearInterval(interval);
   }, []);
 
-  // Add a new habit
-  const addHabit = (habitData: Omit<Habit, "id" | "streak" | "doneToday" | "totalDays" | "completedDays" | "createdAt">) => {
+  // Add new habit
+  const addHabit = (title: string, emoji: string, category: string) => {
     const newHabit: Habit = {
-      id: crypto.randomUUID(),
-      ...habitData,
+      id: Date.now().toString(),
+      title,
+      emoji,
+      category,
       streak: 0,
       doneToday: false,
       totalDays: 0,
       completedDays: 0,
       createdAt: new Date().toISOString(),
     };
-    setHabits([newHabit, ...habits]);
+
+    setHabits(prev => [...prev, newHabit]);
+    setShowAddDialog(false);
   };
 
-  // Toggle habit completion for today
+  // Toggle habit completion
   const toggleHabit = (id: string) => {
-    setHabits(prevHabits => 
-      prevHabits.map(habit => {
+    setHabits(prevHabits => {
+      const updatedHabits = prevHabits.map(habit => {
         if (habit.id === id) {
           const wasCompleted = habit.doneToday;
-          const newStreak = wasCompleted 
-            ? Math.max(0, habit.streak - 1) 
-            : habit.streak + 1;
+          const newDoneToday = !wasCompleted;
           
-          if (!wasCompleted) {
+          let newStreak = habit.streak;
+          let newCompletedDays = habit.completedDays;
+          let newTotalDays = habit.totalDays;
+
+          if (newDoneToday) {
+            // Marking as completed today
+            newCompletedDays += 1;
+            newTotalDays += 1;
+            newStreak += 1;
+            
+            // Show completion notification
             setLastCompletedHabit(habit.title);
             setTimeout(() => setLastCompletedHabit(null), 3000);
+
+            // Send streak milestone notifications
+            if (newStreak === 1) {
+              showNotification(
+                'First Day! 🎉',
+                `Great start with "${habit.title}"! Keep it up!`,
+                'success'
+              );
+            } else if (newStreak === 7) {
+              showNotification(
+                'Week Streak! 🔥',
+                `Amazing! 7-day streak with "${habit.title}"!`,
+                'success'
+              );
+            } else if (newStreak === 30) {
+              showNotification(
+                'Month Streak! 🏆',
+                `Incredible! 30-day streak with "${habit.title}"!`,
+                'success'
+              );
+            }
+          } else {
+            // Marking as incomplete today
+            newStreak = 0; // Reset streak if unchecking
           }
-          
+
           return {
             ...habit,
-            doneToday: !wasCompleted,
+            doneToday: newDoneToday,
             streak: newStreak,
-            completedDays: wasCompleted ? habit.completedDays - 1 : habit.completedDays + 1,
-            totalDays: wasCompleted ? habit.totalDays - 1 : habit.totalDays + 1
+            completedDays: newCompletedDays,
+            totalDays: newTotalDays,
           };
         }
         return habit;
-      })
-    );
+      });
+
+      return updatedHabits;
+    });
   };
 
   // Edit habit title
@@ -138,13 +173,21 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setShowAddDialog(true)}
-              className="w-10 h-10 sm:w-auto sm:px-4 sm:py-2 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg flex items-center justify-center"
-            >
-              <Plus className="w-5 h-5" />
-              <span className="hidden sm:inline ml-2 text-sm font-bold uppercase tracking-wide">Add</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowNotificationSettings(true)}
+                className="w-10 h-10 border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 flex items-center justify-center"
+              >
+                <Bell className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setShowAddDialog(true)}
+                className="w-10 h-10 sm:w-auto sm:px-4 sm:py-2 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg flex items-center justify-center"
+              >
+                <Plus className="w-5 h-5" />
+                <span className="hidden sm:inline ml-2 text-sm font-bold uppercase tracking-wide">Add</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -204,6 +247,12 @@ export default function Home() {
         onAdd={addHabit}
       />
 
+      {/* Notification Settings Dialog */}
+      <NotificationSettings
+        isOpen={showNotificationSettings}
+        onClose={() => setShowNotificationSettings(false)}
+      />
+
       {/* Completion Toast */}
       {lastCompletedHabit && (
         <div className="fixed bottom-4 right-4 bg-success text-white px-4 py-3 border border-success animate-slide-in z-50 shadow-lg">
@@ -219,7 +268,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer */}
+      {/* Footer - Compact */}
       <footer className="border-t border-primary/20 py-4 mt-8 bg-warm-secondary">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-xs text-primary uppercase tracking-widest font-bold">
