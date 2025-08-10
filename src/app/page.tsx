@@ -156,7 +156,7 @@ export default function Home() {
           <div className="mb-6 sm:mb-8">
             <div className="bg-warm-card border border-primary/30 p-4 sm:p-6 rounded-lg shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg sm:text-xl font-black text-text">Today's Progress</h2>
+                <h2 className="text-lg sm:text-xl font-black text-text">Today&apos;s Progress</h2>
                 <span className="text-2xl sm:text-3xl font-black text-primary">
                   {habits.filter(h => h.doneToday).length}/{habits.length}
                 </span>
