@@ -120,78 +120,58 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-warm">
-      {/* Compact Hero Header */}
+      {/* Compact Header */}
       <div className="relative border-b border-primary/20">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="relative max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 border border-primary flex items-center justify-center bg-primary shadow-lg">
-                <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 border border-primary flex items-center justify-center bg-primary shadow-lg">
+                <Zap className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter text-text">
+                <h1 className="text-xl font-black tracking-tighter text-text">
                   HABITPULSE
                 </h1>
-                <p className="text-xs sm:text-sm text-text-secondary font-medium">
-                  Transform your life one habit at a time
+                <p className="text-xs text-text-secondary font-medium">
+                  Transform your life
                 </p>
               </div>
             </div>
             <button
               onClick={() => setShowAddDialog(true)}
-              className="px-4 py-2 sm:px-6 sm:py-3 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg text-sm font-bold uppercase tracking-wide"
+              className="w-10 h-10 sm:w-auto sm:px-4 sm:py-2 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg flex items-center justify-center"
             >
-              <Plus className="w-4 h-4 inline mr-2" />
-              Add Habit
+              <Plus className="w-5 h-5" />
+              <span className="hidden sm:inline ml-2 text-sm font-bold uppercase tracking-wide">Add</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content - Habits First */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Quick Progress Summary */}
-        {habits.length > 0 && (
-          <div className="mb-6 sm:mb-8">
-            <div className="bg-warm-card border border-primary/30 p-4 sm:p-6 rounded-lg shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg sm:text-xl font-black text-text">Today&apos;s Progress</h2>
-                <span className="text-2xl sm:text-3xl font-black text-primary">
-                  {habits.filter(h => h.doneToday).length}/{habits.length}
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-                <div 
-                  className="h-3 bg-primary transition-all duration-500 ease-out rounded-full"
-                  style={{ width: `${habits.length > 0 ? (habits.filter(h => h.doneToday).length / habits.length) * 100 : 0}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-4">
         {/* Habits Grid - Immediately Visible */}
         {habits.length === 0 ? (
-          <div className="text-center py-12 sm:py-16">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 border border-primary flex items-center justify-center bg-primary shadow-lg">
-              <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+          <div className="text-center py-12">
+            <div className="w-20 h-20 mx-auto mb-6 border border-primary flex items-center justify-center bg-primary shadow-lg">
+              <Sparkles className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-text mb-4 tracking-tighter">
+            <h3 className="text-2xl font-black text-text mb-4 tracking-tighter">
               START YOUR HABIT JOURNEY
             </h3>
-            <p className="text-base sm:text-lg text-text-secondary mb-6 max-w-md mx-auto font-medium">
+            <p className="text-base text-text-secondary mb-6 max-w-md mx-auto font-medium">
               Create your first habit and begin building the life you&apos;ve always wanted.
             </p>
             <button
               onClick={() => setShowAddDialog(true)}
-              className="px-6 py-3 sm:px-8 sm:py-4 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 font-black tracking-wide uppercase shadow-lg"
+              className="px-6 py-3 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 font-black tracking-wide uppercase shadow-lg"
             >
               Create Your First Habit
             </button>
           </div>
         ) : (
-          <div className="japanese-grid">
+          <div className="space-y-4">
             {habits.map((habit, index) => (
               <div
                 key={habit.id}
@@ -211,7 +191,7 @@ export default function Home() {
 
         {/* Detailed Stats - Below Habits */}
         {habits.length > 0 && (
-          <div className="mt-8 sm:mt-12">
+          <div className="mt-8">
             <ProgressStats habits={habits} />
           </div>
         )}
@@ -224,26 +204,26 @@ export default function Home() {
         onAdd={addHabit}
       />
 
-      {/* Completion Toast - Professional */}
+      {/* Completion Toast */}
       {lastCompletedHabit && (
-        <div className="fixed bottom-8 right-8 bg-success text-white px-6 py-4 border border-success animate-slide-in z-50 shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-success text-white px-4 py-3 border border-success animate-slide-in z-50 shadow-lg">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 border border-white flex items-center justify-center bg-white/20">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-6 h-6 border border-white flex items-center justify-center bg-white/20">
+              <Sparkles className="w-3 h-3" />
             </div>
             <div>
-              <p className="font-black uppercase tracking-wide text-sm">Great job!</p>
+              <p className="font-black uppercase tracking-wide text-xs">Great job!</p>
               <p className="text-xs font-medium">&ldquo;{lastCompletedHabit}&rdquo; completed!</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer - Compact */}
+      {/* Footer */}
       <footer className="border-t border-primary/20 py-4 mt-8 bg-warm-secondary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-xs sm:text-sm text-primary uppercase tracking-widest font-bold">
-            HabitPulse • Transform Your Life One Habit at a Time
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-xs text-primary uppercase tracking-widest font-bold">
+            HabitPulse • Transform Your Life
           </p>
         </div>
       </footer>
