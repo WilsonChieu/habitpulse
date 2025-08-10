@@ -105,10 +105,10 @@ export default function Home() {
   };
 
   // Edit habit title
-  const editHabit = (id: string, newTitle: string) => {
+  const editHabit = (id: string, newTitle: string, newCategory: string) => {
     setHabits(prevHabits =>
       prevHabits.map(habit =>
-        habit.id === id ? { ...habit, title: newTitle } : habit
+        habit.id === id ? { ...habit, title: newTitle, category: newCategory } : habit
       )
     );
   };

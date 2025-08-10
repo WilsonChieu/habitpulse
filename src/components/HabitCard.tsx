@@ -7,7 +7,7 @@ import { Habit } from "../types/habit";
 interface HabitCardProps {
   habit: Habit;
   onToggle: (id: string) => void;
-  onEdit: (id: string, newTitle: string) => void;
+  onEdit: (id: string, newTitle: string, newCategory: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -21,18 +21,35 @@ const categoryColors = {
   Other: "bg-gray-500",
 };
 
+const categories = [
+  { name: "Health", emoji: "🏃‍♂️", color: "bg-green-500" },
+  { name: "Productivity", emoji: "⚡", color: "bg-blue-500" },
+  { name: "Learning", emoji: "📚", color: "bg-purple-500" },
+  { name: "Mindfulness", emoji: "🧘‍♀️", color: "bg-cyan-500" },
+  { name: "Creativity", emoji: "🎨", color: "bg-orange-500" },
+  { name: "Social", emoji: "👥", color: "bg-emerald-500" },
+  { name: "Other", emoji: "✨", color: "bg-gray-500" },
+];
+
 export function HabitCard({ habit, onToggle, onEdit, onDelete }: HabitCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(habit.title);
+  const [editCategory, setEditCategory] = useState(habit.category);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const progressPercentage = habit.totalDays > 0 ? (habit.completedDays / habit.totalDays) * 100 : 0;
   const categoryColor = categoryColors[habit.category as keyof typeof categoryColors] || categoryColors.Other;
 
   const handleEdit = () => {
-    if (editTitle.trim() && editTitle !== habit.title) {
-      onEdit(habit.id, editTitle.trim());
+    if (editTitle.trim() && (editTitle !== habit.title || editCategory !== habit.category)) {
+      onEdit(habit.id, editTitle.trim(), editCategory);
     }
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditTitle(habit.title);
+    setEditCategory(habit.category);
     setIsEditing(false);
   };
 
@@ -66,47 +83,82 @@ export function HabitCard({ habit, onToggle, onEdit, onDelete }: HabitCardProps)
             <div className="text-2xl">{habit.emoji}</div>
             <div className="flex-1 min-w-0">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  onBlur={handleEdit}
-                  onKeyDown={(e) => e.key === "Enter" && handleEdit()}
-                  className="w-full bg-transparent border-b border-primary focus:border-primary-dark focus:outline-none text-lg font-black tracking-tight"
-                  autoFocus
-                />
-              ) : (
-                <h3 className="text-lg font-black text-text tracking-tight truncate">
-                  {habit.title}
-                </h3>
-              )}
-              <div className="flex items-center space-x-2 mt-1">
-                <span className="text-xs px-2 py-1 border border-primary/30 text-primary font-bold uppercase tracking-wider bg-primary/5">
-                  {habit.category}
-                </span>
-                <div className="flex items-center space-x-1 text-accent">
-                  <Flame className="w-3 h-3" />
-                  <span className="text-xs font-black">{habit.streak}</span>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+                    className="w-full bg-transparent border-b border-primary focus:border-primary-dark focus:outline-none text-lg font-black tracking-tight"
+                    autoFocus
+                  />
+                  <div className="grid grid-cols-3 gap-1">
+                    {categories.map((category) => (
+                      <button
+                        key={category.name}
+                        onClick={() => setEditCategory(category.name)}
+                        className={`p-2 text-xs border transition-all duration-200 ${
+                          editCategory === category.name
+                            ? `border-primary ${category.color} text-white`
+                            : "border-primary/30 hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="text-sm mb-1">{category.emoji}</div>
+                        <div className="font-bold uppercase tracking-wider">{category.name}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleEdit}
+                      className="px-3 py-1 bg-primary text-white text-xs font-bold border border-primary hover:bg-primary-dark transition-all duration-200"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="px-3 py-1 border border-primary/30 text-primary text-xs font-bold hover:bg-primary hover:text-white transition-all duration-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <h3 className="text-lg font-black text-text tracking-tight truncate">
+                    {habit.title}
+                  </h3>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <span className="text-xs px-2 py-1 border border-primary/30 text-primary font-bold uppercase tracking-wider bg-primary/5">
+                      {habit.category}
+                    </span>
+                    <div className="flex items-center space-x-1 text-accent">
+                      <Flame className="w-3 h-3" />
+                      <span className="text-xs font-black">{habit.streak}</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           {/* Actions - Always visible on mobile */}
-          <div className="flex items-center space-x-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="p-2 border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200"
-            >
-              <Edit2 className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="p-2 border border-error/30 hover:bg-error hover:text-white transition-all duration-200"
-            >
-              <Trash2 className="w-3 h-3" />
-            </button>
-          </div>
+          {!isEditing && (
+            <div className="flex items-center space-x-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-2 border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200"
+              >
+                <Edit2 className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="p-2 border border-error/30 hover:bg-error hover:text-white transition-all duration-200"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Progress Stats */}
