@@ -9,6 +9,7 @@ import {
   isNotificationEnabled, 
   getNotificationSettings, 
   updateNotificationSettings,
+  showNotification,
   type NotificationSettings 
 } from "../utils/notifications";
 
@@ -37,9 +38,14 @@ export function NotificationSettings({ isOpen, onClose }: NotificationSettingsPr
   }, [isOpen]);
 
   const loadSettings = async () => {
+    console.log('Loading notification settings...');
     const supported = isNotificationSupported();
     const enabled = isNotificationEnabled();
     const currentSettings = getNotificationSettings();
+
+    console.log('Notification supported:', supported);
+    console.log('Notification enabled:', enabled);
+    console.log('Current settings:', currentSettings);
 
     setIsSupported(supported);
     setIsEnabled(enabled);
@@ -47,9 +53,11 @@ export function NotificationSettings({ isOpen, onClose }: NotificationSettingsPr
   };
 
   const handlePermissionRequest = async () => {
+    console.log('Requesting notification permission...');
     setIsLoading(true);
     try {
       const granted = await requestNotificationPermission();
+      console.log('Permission granted:', granted);
       setIsEnabled(granted);
       if (granted) {
         setSettings(prev => ({ ...prev, enabled: true }));
@@ -222,11 +230,16 @@ export function NotificationSettings({ isOpen, onClose }: NotificationSettingsPr
                 {/* Test Notification */}
                 <div className="pt-4 border-t border-primary/20">
                   <button
-                    onClick={() => notificationManager.showNotification(
-                      'HabitPulse Test',
-                      'This is a test notification! 🎉',
-                      'reminder'
-                    )}
+                    onClick={async () => {
+                      console.log('Test notification clicked');
+                      console.log('Notification permission:', Notification.permission);
+                      console.log('Notification supported:', 'Notification' in window);
+                      await showNotification(
+                        'HabitPulse Test',
+                        'This is a test notification! 🎉',
+                        'reminder'
+                      );
+                    }}
                     className="w-full px-4 py-3 border border-primary/30 text-primary hover:bg-primary hover:text-white transition-all duration-200 font-bold uppercase tracking-wide"
                   >
                     Test Notification

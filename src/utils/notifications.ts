@@ -1,4 +1,6 @@
 // Notification utility for HabitPulse
+import type { Habit } from '../types/habit';
+
 export interface NotificationSettings {
   enabled: boolean;
   dailyReminder: boolean;
@@ -6,18 +8,6 @@ export interface NotificationSettings {
   reminderTime: string; // "09:00" format
   soundEnabled: boolean;
   vibrationEnabled: boolean;
-}
-
-export interface Habit {
-  id: string;
-  title: string;
-  emoji: string;
-  category: string;
-  streak: number;
-  doneToday: boolean;
-  totalDays: number;
-  completedDays: number;
-  createdAt: string;
 }
 
 class NotificationManager {
@@ -119,7 +109,7 @@ class NotificationManager {
   // Check if notifications are enabled
   isEnabled(): boolean {
     if (typeof window === 'undefined') return false;
-    return this.settings.enabled && Notification.permission === 'granted';
+    return Notification.permission === 'granted';
   }
 
   // Get current settings
@@ -217,9 +207,17 @@ class NotificationManager {
 
   // Show a notification
   async showNotification(title: string, body: string, type: 'reminder' | 'warning' | 'success' = 'reminder') {
-    if (!this.isEnabled()) return;
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
 
     try {
+      // Check permission first
+      if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+      } else if (Notification.permission !== 'granted') {
+        return;
+      }
+
       const options: NotificationOptions = {
         body,
         icon: '/icon-192x192.png',
