@@ -55,17 +55,42 @@ class NotificationManager {
     try {
       // Register service worker
       if ('serviceWorker' in navigator) {
-        this.registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service Worker registered:', this.registration);
+        try {
+          this.registration = await navigator.serviceWorker.register('/sw.js');
+          console.log('Service Worker registered:', this.registration);
+          
+          // Wait for service worker to be ready
+          if (this.registration.installing || this.registration.waiting) {
+            await new Promise<void>((resolve) => {
+              const worker = this.registration!.installing || this.registration!.waiting;
+              if (worker) {
+                worker.addEventListener('statechange', () => {
+                  if (worker.state === 'activated') {
+                    resolve();
+                  }
+                });
+              } else {
+                resolve();
+              }
+            });
+          }
+          
+          console.log('Service Worker state:', this.registration.active ? 'active' : 'inactive');
+        } catch (swError) {
+          console.warn('Service Worker registration failed, notifications will use fallback:', swError);
+          this.registration = null;
+        }
       }
 
       // Listen for messages from service worker
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.type === 'GET_HABITS') {
-          const habits = this.getStoredHabits();
-          event.ports[0]?.postMessage({ habits });
-        }
-      });
+      if (this.registration) {
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data.type === 'GET_HABITS') {
+            const habits = this.getStoredHabits();
+            event.ports[0]?.postMessage({ habits });
+          }
+        });
+      }
     } catch (error) {
       console.error('Error initializing notifications:', error);
     }
@@ -207,14 +232,26 @@ class NotificationManager {
 
   // Show a notification
   async showNotification(title: string, body: string, type: 'reminder' | 'warning' | 'success' = 'reminder') {
-    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      console.log('Notifications not supported in this environment');
+      return;
+    }
 
     try {
+      console.log('Attempting to show notification:', { title, body, type });
+      console.log('Current permission:', Notification.permission);
+      
       // Check permission first
       if (Notification.permission === 'default') {
+        console.log('Requesting notification permission...');
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
+        console.log('Permission result:', permission);
+        if (permission !== 'granted') {
+          console.log('Permission denied');
+          return;
+        }
       } else if (Notification.permission !== 'granted') {
+        console.log('Permission not granted');
         return;
       }
 
@@ -226,17 +263,30 @@ class NotificationManager {
         requireInteraction: type === 'warning'
       };
 
+      console.log('Notification options:', options);
+
       // Add vibration if enabled (only in service worker context)
       if (this.settings.vibrationEnabled && 'vibrate' in navigator) {
         (options as NotificationOptions & { vibrate?: number[] }).vibrate = [200, 100, 200];
       }
 
-      // Show notification
-      if (this.registration) {
-        await this.registration.showNotification(title, options);
-      } else {
-        new Notification(title, options);
+      // Try service worker first, fallback to direct API
+      try {
+        if (this.registration && this.registration.active) {
+          console.log('Using service worker for notification');
+          await this.registration.showNotification(title, options);
+        } else {
+          console.log('Service worker not active, using direct Notification API');
+          const notification = new Notification(title, options);
+          console.log('Notification created:', notification);
+        }
+      } catch (swError) {
+        console.log('Service worker notification failed, falling back to direct API:', swError);
+        const notification = new Notification(title, options);
+        console.log('Fallback notification created:', notification);
       }
+      
+      console.log('Notification sent successfully');
     } catch (error) {
       console.error('Error showing notification:', error);
     }
@@ -291,3 +341,26 @@ export const updateNotificationSettings = (settings: Partial<NotificationSetting
   notificationManager.updateSettings(settings);
 export const showNotification = (title: string, body: string, type?: 'reminder' | 'warning' | 'success') =>
   notificationManager.showNotification(title, body, type);
+
+// Simple fallback notification function
+export const showSimpleNotification = (title: string, body: string) => {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    console.log('Notifications not supported');
+    return;
+  }
+  
+  if (Notification.permission === 'granted') {
+    try {
+      new Notification(title, { body });
+      console.log('Simple notification sent:', title);
+    } catch (error) {
+      console.error('Error sending simple notification:', error);
+    }
+  } else if (Notification.permission === 'default') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification(title, { body });
+      }
+    });
+  }
+};

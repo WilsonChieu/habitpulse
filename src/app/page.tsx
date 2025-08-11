@@ -158,14 +158,14 @@ export default function Home() {
       {/* Compact Header */}
       <div className="relative border-b border-primary/20">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
-        <div className="relative max-w-7xl mx-auto px-4 py-4">
+        <div className="relative max-w-7xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 border border-primary flex items-center justify-center bg-primary shadow-lg">
-                <Zap className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 border border-primary flex items-center justify-center bg-primary shadow-lg">
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-black tracking-tighter text-text">
+                <h1 className="text-lg sm:text-xl font-black tracking-tighter text-text">
                   HABITPULSE
                 </h1>
                 <p className="text-xs text-text-secondary font-medium">
@@ -176,15 +176,15 @@ export default function Home() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowNotificationSettings(true)}
-                className="w-10 h-10 border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 flex items-center justify-center"
+                className="w-9 h-9 sm:w-10 sm:h-10 border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 flex items-center justify-center"
               >
                 <Bell className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setShowAddDialog(true)}
-                className="w-10 h-10 sm:w-auto sm:px-4 sm:py-2 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg flex items-center justify-center"
+                className="w-9 h-9 sm:w-10 sm:h-10 sm:w-auto sm:px-4 sm:py-2 bg-primary text-white border border-primary hover:bg-primary-dark transition-all duration-300 shadow-lg flex items-center justify-center"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline ml-2 text-sm font-bold uppercase tracking-wide">Add</span>
               </button>
             </div>
