@@ -229,8 +229,8 @@ class NotificationManager {
       };
 
       // Add vibration if enabled (only in service worker context)
-      if (this.settings.vibrationEnabled && 'vibrate' in options) {
-        (options as any).vibrate = [200, 100, 200];
+      if (this.settings.vibrationEnabled && 'vibrate' in navigator) {
+        (options as NotificationOptions & { vibrate?: number[] }).vibrate = [200, 100, 200];
       }
 
       // Show notification
